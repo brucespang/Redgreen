@@ -4,16 +4,13 @@ require 'test/unit/ui/console/testrunner'
 # cute.
 module RedGreen
   module Color
-    # 37 = white, 30 = black
-    FG_COLORS = { :for_clear => 37, :for_red => 37, :for_green => 37, :for_yellow => 30}   
-    BG_COLORS = { :clear => 0, :red => 41, :green => 42, :yellow => 43 }
+    COLORS = { :clear => 0, :red => 31, :green => 32, :yellow => 33}   
     def self.method_missing(color_name, *args)
       color(color_name) + args.first + color(:clear) 
     end
     def self.color(color)
-      fg_color = FG_COLORS["for_#{color}".to_sym]
-      bg_color = BG_COLORS[color.to_sym]
-      "\e[#{fg_color};#{bg_color}m" 
+      color = COLORS["#{color}".to_sym]
+      "\e[#{color}m" 
     end
   end
 end
@@ -30,7 +27,7 @@ class Test::Unit::UI::Console::RedGreenTestRunner < Test::Unit::UI::Console::Tes
                 when 'F' then RedGreen::Color.red("F")
                 when 'E' then RedGreen::Color.yellow("E")
                 else something
-                end
+                end if ENV["REDGREEN_ENABLED"] != "false"
     @io.write(something) 
     @io.flush
   end
